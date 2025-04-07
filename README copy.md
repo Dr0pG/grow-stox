@@ -1,1 +1,0 @@
-# Welcome to GrowStox 📈
