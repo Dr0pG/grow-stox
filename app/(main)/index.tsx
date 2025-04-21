@@ -1,11 +1,21 @@
+import { ThemedText } from "@/components/ThemedText";
+import ThemedView from "@/components/ThemedView";
+import { useTheme } from "@/context/ThemeContext";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 const MainScreen = () => {
+  const { t } = useTranslation();
+
+  const { toggleTheme } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <Text>Main screen</Text>
-    </View>
+    <ThemedView style={styles.container}>
+      <TouchableOpacity onPress={toggleTheme}>
+        <ThemedText>{t('welcome')}</ThemedText>
+      </TouchableOpacity>
+    </ThemedView>
   );
 };
 
