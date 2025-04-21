@@ -1,4 +1,4 @@
-package com.dropg.growstox
+package com.app.growstox
 
 import android.app.Application
 import android.content.res.Configuration

@@ -1,4 +1,4 @@
-package com.dropg.growstox
+package com.app.growstox
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
