@@ -30,9 +30,9 @@ export function ThemedText({
 
   // Use derived value to compute the color based on `type` and `theme`
   const animatedTextColor = useDerivedValue(() => {
-    if (color) {
-      return withTiming(color, { duration: Durations.colorChanged });
-    }
+    if (!color) return;
+
+    return withTiming(color, { duration: Durations.colorChanged });
   }, [color, theme, type]);
 
   const animatedStyle = useAnimatedStyle(() => ({
