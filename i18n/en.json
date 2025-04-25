@@ -1,3 +1,5 @@
 {
-  "welcome": "Welcome"
+  "home": "Home",
+  "followed_stocks": "Followed Stocks",
+  "news": "News",
 }

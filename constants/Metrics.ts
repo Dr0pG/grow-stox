@@ -29,6 +29,12 @@ export const Metrics = {
   mediumRadius: 8,
   largeRadius: 16,
 
+  // Graph
+  graphHeight: 200,
+
+  // Back Arrow
+  backArrowSize: 28,
+
   // Screen Dimensions
   screenWidth: Dimensions.get("window").width,
   screenHeight: Dimensions.get("window").height,

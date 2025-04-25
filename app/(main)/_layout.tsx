@@ -5,6 +5,7 @@ const Main = () => {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="stock/index" options={{ headerShown: false }} />
     </Stack>
   );
 };

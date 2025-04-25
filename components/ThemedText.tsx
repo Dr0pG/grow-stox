@@ -4,47 +4,75 @@ import Durations from "@/constants/Durations";
 import { useTheme } from "@/context/ThemeContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Animated, {
+  BounceInDown,
+  BounceOutDown,
   FadeInDown,
   FadeOutDown,
   useAnimatedStyle,
   useDerivedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useCallback } from "react";
+import { Metrics } from "@/constants/Metrics";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: "default" | "title" | "defaultSemiBold" | "subtitle" | "link";
+  color?: string;
+  type?:
+    | "small"
+    | "default"
+    | "title"
+    | "defaultSemiBold"
+    | "subtitle"
+    | "link";
+  animationType?: "fade" | "bounce";
 };
 
 export function ThemedText({
   style,
   lightColor,
   darkColor,
+  color,
   type = "default",
+  animationType = undefined,
   ...rest
 }: ThemedTextProps) {
   const { theme } = useTheme();
 
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+  const currentColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "text"
+  );
 
   // Use derived value to compute the color based on `type` and `theme`
   const animatedTextColor = useDerivedValue(() => {
-    if (!color) return;
-
-    return withTiming(color, { duration: Durations.colorChanged });
-  }, [color, theme, type]);
+    return withTiming(color || currentColor, {
+      duration: Durations.colorChanged,
+    });
+  }, [color, currentColor, theme, type]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     color: animatedTextColor.value,
   }));
 
-  const animation = () => {
-    return {
-      entering: FadeInDown.duration(Durations.animations).springify(),
-      exiting: FadeOutDown.duration(Durations.animations).springify(),
-    };
-  };
+  const animation = useCallback(() => {
+    if (!animationType) return null;
+    switch (animationType) {
+      case "fade":
+        return {
+          entering: FadeInDown.duration(Durations.animations).springify(),
+          exiting: FadeOutDown.duration(Durations.animations).springify(),
+        };
+      case "bounce":
+        return {
+          entering: BounceInDown.duration(Durations.animations).springify(),
+          exiting: BounceOutDown.duration(Durations.animations).springify(),
+        };
+      default:
+        return null;
+    }
+  }, [animationType]);
 
   return (
     <Animated.Text
@@ -52,6 +80,7 @@ export function ThemedText({
       accessible
       accessibilityLabel={rest.children?.toString()}
       style={[
+        type === "small" ? styles.small : undefined,
         type === "default" ? styles.default : undefined,
         type === "title" ? styles.title : undefined,
         type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
@@ -60,36 +89,41 @@ export function ThemedText({
         animatedStyle,
         style,
       ]}
-      {...(animation?.() && {
-        entering: animation().entering,
-        exiting: animation().exiting,
-      })}
+      {...(animation?.() &&
+        !!animationType && {
+          entering: animation().entering,
+          exiting: animation().exiting,
+        })}
     />
   );
 }
 
 const styles = StyleSheet.create({
+  small: {
+    fontSize: Metrics.size14,
+    lineHeight: Metrics.size14 * 1.3,
+  },
   default: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: Metrics.size16,
+    lineHeight: Metrics.size16 * 1.3,
   },
   defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: Metrics.size16,
+    lineHeight: Metrics.size16 * 1.3,
     fontWeight: "600",
   },
   title: {
-    fontSize: 32,
+    fontSize: Metrics.size32,
     fontWeight: "bold",
-    lineHeight: 32,
+    lineHeight: Metrics.size32,
   },
   subtitle: {
-    fontSize: 20,
+    fontSize: Metrics.size20,
     fontWeight: "bold",
   },
   link: {
-    lineHeight: 30,
-    fontSize: 16,
+    fontSize: Metrics.size16,
+    lineHeight: Metrics.size16 * 1.3,
     color: "#0a7ea4",
   },
 });
