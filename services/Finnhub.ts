@@ -70,7 +70,9 @@ const fetchAllNews = async (stocks: string[]): Promise<NewsDTO[]> => {
     })
   );
 
-  return allNews.flat();
+  return allNews.flat().sort(function (a: NewsDTO, b: NewsDTO) {
+    return b.datetime - a.datetime;
+  });
 };
 
 const fetchStockNews = async (stock: string): Promise<NewsDTO[]> => {
@@ -80,7 +82,9 @@ const fetchStockNews = async (stock: string): Promise<NewsDTO[]> => {
     `https://finnhub.io/api/v1/company-news?symbol=${stock}&from=${from}&to=${to}&token=${API_KEY}`
   );
   const data = await res.json();
-  return data.slice(0, 10);
+  return data.slice(0, 10).sort(function (a: NewsDTO, b: NewsDTO) {
+    return b.datetime - a.datetime;
+  });
 };
 
 const getStockData = async (

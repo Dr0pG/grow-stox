@@ -1,23 +1,26 @@
+import StocksCard from "@/components/StocksCard";
+import StocksNews from "@/components/StocksNews";
 import { ThemedText } from "@/components/ThemedText";
 import ThemedView from "@/components/ThemedView";
 import { Metrics } from "@/constants/Metrics";
 import { useTheme } from "@/context/ThemeContext";
 import Finnhub, { NewsDTO, StocksDTO } from "@/services/Finnhub";
+import { useIsFocused } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  ActivityIndicator,
   FlatList,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
-import StocksCard from "@/components/StocksCard";
-import { useIsFocused } from "@react-navigation/native";
-import StocksNews from "@/components/StocksNews";
 
 const STOCKS = ["AAPL", "TSLA", "MSFT"];
+
+let init = true;
 
 const MainScreen = () => {
   const { t } = useTranslation();
@@ -30,7 +33,7 @@ const MainScreen = () => {
   const [stockData, setStockData] = useState<StocksDTO[]>([]);
   const [news, setNews] = useState<NewsDTO[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onNavigateToStock = (name: string, symbol: string) =>
     router.push({
@@ -39,7 +42,7 @@ const MainScreen = () => {
     });
 
   const fetchStockInfo = async () => {
-    setLoading(true);
+    if (init) setIsLoading(true);
     try {
       const data = await Finnhub.fetchStockInfo(STOCKS);
       setStockData(data);
@@ -49,7 +52,8 @@ const MainScreen = () => {
     } catch (error) {
       console.log("🚀 ~ fetchStockInfo ~ error:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+      init = false;
     }
   };
 
@@ -59,7 +63,9 @@ const MainScreen = () => {
     fetchStockInfo();
   }, [isFocused]);
 
-  const renderFollowedStocks = () => {
+  const renderFollowedStocks = useCallback(() => {
+    if (!stockData?.length) return;
+
     return (
       <View style={styles.followedStocksContainer}>
         <ThemedText
@@ -85,12 +91,15 @@ const MainScreen = () => {
           )}
           ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           scrollEnabled={false}
+          removeClippedSubviews={false}
         />
       </View>
     );
-  };
+  }, [stockData]);
 
-  const renderNews = () => {
+  const renderNews = useCallback(() => {
+    if (!news?.length) return;
+
     return (
       <View style={styles.newsContainer}>
         <ThemedText
@@ -110,22 +119,28 @@ const MainScreen = () => {
               headline={item.headline}
               source={item.source}
               url={item.url}
+              datetime={item.datetime}
             />
           )}
           ItemSeparatorComponent={() => (
             <View style={styles.newsItemSeparator} />
           )}
           scrollEnabled={false}
+          removeClippedSubviews={false}
         />
       </View>
     );
-  };
+  }, [news]);
 
-  return (
-    <ThemedView style={styles.container}>
-      <TouchableOpacity onPress={toggleTheme}>
-        <ThemedText type="title">{t("home")}</ThemedText>
-      </TouchableOpacity>
+  const renderContent = useCallback(() => {
+    if (isLoading)
+      return (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator />
+        </View>
+      );
+
+    return (
       <ScrollView
         style={styles.mainScroll}
         showsVerticalScrollIndicator={false}
@@ -133,6 +148,15 @@ const MainScreen = () => {
         {renderFollowedStocks()}
         {renderNews()}
       </ScrollView>
+    );
+  }, [isLoading, news, stockData]);
+
+  return (
+    <ThemedView style={styles.container}>
+      <TouchableOpacity onPress={toggleTheme}>
+        <ThemedText type="title">{t("home")}</ThemedText>
+      </TouchableOpacity>
+      {renderContent()}
     </ThemedView>
   );
 };
@@ -171,6 +195,11 @@ const styles = StyleSheet.create({
   },
   newsTitle: {
     paddingBottom: Metrics.mediumMargin,
+  },
+  loaderContainer: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

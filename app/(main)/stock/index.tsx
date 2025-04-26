@@ -1,3 +1,13 @@
+import Back from "@/components/Back";
+import StocksNews from "@/components/StocksNews";
+import { ThemedText } from "@/components/ThemedText";
+import ThemedView from "@/components/ThemedView";
+import { Metrics } from "@/constants/Metrics";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import Finnhub, { GraphicRange, NewsDTO } from "@/services/Finnhub";
+import { getFinalPercentageChange, hexToRgba } from "@/utils/Helper";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,17 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import ThemedView from "@/components/ThemedView";
-import { Metrics } from "@/constants/Metrics";
-import { ThemedText } from "@/components/ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { GraphPoint, LineGraph } from "react-native-graph";
-import { getFinalPercentageChange, hexToRgba } from "@/utils/Helper";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import Finnhub, { GraphicRange, NewsDTO } from "@/services/Finnhub";
-import StocksNews from "@/components/StocksNews";
-import Back from "@/components/Back";
 
 const RANGE = [
   GraphicRange.Weekly,
@@ -24,6 +24,8 @@ const RANGE = [
   GraphicRange.HalfYear,
   GraphicRange.Yearly,
 ];
+
+let init = true;
 
 const Stock = () => {
   const router = useRouter();
@@ -47,7 +49,7 @@ const Stock = () => {
   const onBack = () => router.back();
 
   const getStockData = async () => {
-    setIsLoading(true);
+    if (init) setIsLoading(true);
     try {
       if (!stock) return;
 
@@ -60,6 +62,7 @@ const Stock = () => {
       console.log("🚀 ~ getStockData ~ error:", error);
     } finally {
       setIsLoading(false);
+      init = false;
     }
   };
 
@@ -119,9 +122,15 @@ const Stock = () => {
             },
           ]}
         >
-          <ThemedText animationType="fade" type="subtitle">{`$${selectedPoint}`}</ThemedText>
+          <ThemedText
+            animationType="fade"
+            type="subtitle"
+          >{`$${selectedPoint}`}</ThemedText>
           {result && (
-            <ThemedText animationType="fade" color={result.isPositive ? accentGreen : accentRed}>
+            <ThemedText
+              animationType="fade"
+              color={result.isPositive ? accentGreen : accentRed}
+            >
               {result.value}
             </ThemedText>
           )}
@@ -144,15 +153,21 @@ const Stock = () => {
     );
   };
 
-  const renderHeader = () => {
+  const renderHeader = useCallback(() => {
+    if (!name) return;
+
     return (
       <View style={styles.titleContainer}>
-        <ThemedText animationType="fade" type="title">{name}</ThemedText>
+        <ThemedText animationType="fade" type="title">
+          {name}
+        </ThemedText>
       </View>
     );
-  };
+  }, [name]);
 
-  const renderNews = () => {
+  const renderNews = useCallback(() => {
+    if (!currentNews?.length) return;
+
     return (
       <FlatList
         keyExtractor={(item, index) => `${item.headline}_${index}`}
@@ -165,16 +180,25 @@ const Stock = () => {
             headline={item.headline}
             source={item.source}
             url={item.url}
+            datetime={item.datetime}
           />
         )}
         ItemSeparatorComponent={() => <View style={styles.newsItemSeparator} />}
         scrollEnabled={false}
+        removeClippedSubviews={false}
       />
     );
-  };
+  }, [currentNews]);
 
-  return (
-    <ThemedView style={styles.container}>
+  const renderContent = () => {
+    if (isLoading)
+      return (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator />
+        </View>
+      );
+
+    return (
       <ScrollView
         style={styles.mainScroll}
         showsVerticalScrollIndicator={false}
@@ -184,8 +208,10 @@ const Stock = () => {
         {renderGraph()}
         {renderNews()}
       </ScrollView>
-    </ThemedView>
-  );
+    );
+  };
+
+  return <ThemedView style={styles.container}>{renderContent()}</ThemedView>;
 };
 
 const styles = StyleSheet.create({

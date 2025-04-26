@@ -1,22 +1,17 @@
-import {
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { memo } from "react";
-import { ThemedText } from "./ThemedText";
-import { Image } from "expo-image";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { getFormattedDate } from "@/utils/Helper";
+import React, { memo } from "react";
+import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ThemedText } from "./ThemedText";
 
 type PropTypes = {
   headline: string;
   url: string;
   source: string;
+  datetime: number;
 };
 
-const StocksNews = ({ headline, source, url }: PropTypes) => {
+const StocksNews = ({ headline, source, url, datetime }: PropTypes) => {
   const secondaryText = useThemeColor({}, "secondaryText");
 
   return (
@@ -26,9 +21,11 @@ const StocksNews = ({ headline, source, url }: PropTypes) => {
     >
       <View style={styles.mainContainer}>
         <ThemedText animationType="fade">{headline}</ThemedText>
-        <ThemedText animationType="fade" type="small" color={secondaryText}>
-          {source}
-        </ThemedText>
+        {datetime && (
+          <ThemedText animationType="fade" type="small" color={secondaryText}>
+            {getFormattedDate(datetime)}
+          </ThemedText>
+        )}
       </View>
     </TouchableOpacity>
   );

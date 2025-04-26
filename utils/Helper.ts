@@ -1,3 +1,5 @@
+import i18n from "@/i18n";
+
 export const hexToRgba = (hex: string, opacity: number): string => {
   // Remove the hash at the start if it's there
   hex = hex.replace(/^#/, "");
@@ -42,4 +44,43 @@ export const getDateRange = () => {
   const from = past.toISOString().split("T")[0];
 
   return { from, to };
+};
+
+export const getFormattedDate = (datetime: number) => {
+  const date = new Date(datetime * 1000);
+  const now = new Date();
+
+  const seconds = Math.floor((date.getTime() - now.getTime()) / 1000);
+
+  const isFuture = seconds > 0;
+  const absSeconds = Math.abs(seconds);
+
+  const minutes = Math.floor(absSeconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30); // rough estimate
+  const years = Math.floor(days / 365);
+
+  let result = "";
+
+  if (absSeconds < 60)
+    result = `${absSeconds} ${i18n.t("time.second")}${
+      absSeconds !== 1 ? "s" : ""
+    }`;
+  else if (minutes < 60)
+    result = `${minutes} ${i18n.t("time.minute")}${minutes !== 1 ? "s" : ""}`;
+  else if (hours < 24)
+    result = `${hours} ${i18n.t("time.hour")}${hours !== 1 ? "s" : ""}`;
+  else if (days < 7)
+    result = `${days} ${i18n.t("time.day")}${days !== 1 ? "s" : ""}`;
+  else if (weeks < 5)
+    result = `${weeks} ${i18n.t("time.week")}${weeks !== 1 ? "s" : ""}`;
+  else if (months < 12)
+    result = `${months} ${i18n.t("time.month")}${months !== 1 ? "s" : ""}`;
+  else result = `${years} ${i18n.t("time.year")}${years !== 1 ? "s" : ""}`;
+
+  return isFuture
+    ? `${i18n.t("time.in")} ${result}`
+    : `${result} ${i18n.t("time.ago")}`;
 };

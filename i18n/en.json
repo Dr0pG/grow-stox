@@ -2,4 +2,15 @@
   "home": "Home",
   "followed_stocks": "Followed Stocks",
   "news": "News",
+  "time": {
+    "second": "second",
+    "minute": "minute",
+    "hour": "hour",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "year": "year",
+    "in": "in",
+    "ago": "ago"
+  }
 }
