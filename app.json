@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "GrowStox",
-    "slug": "GrowStox",
+    "slug": "growstox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -38,6 +38,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a5476f50-c3a4-4913-a1fa-2367cd418acd"
+      }
+    },
+    "owner": "dropg"
   }
 }
