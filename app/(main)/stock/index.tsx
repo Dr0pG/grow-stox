@@ -2,6 +2,7 @@ import Back from "@/components/Back";
 import StocksNews from "@/components/StocksNews";
 import { ThemedText } from "@/components/ThemedText";
 import ThemedView from "@/components/ThemedView";
+import { Animations } from "@/constants/Animations";
 import { Metrics } from "@/constants/Metrics";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Finnhub, { GraphicRange, NewsDTO } from "@/services/Finnhub";
@@ -89,8 +90,12 @@ const Stock = () => {
           },
         ]}
       >
-        {RANGE.map((item) => {
-          return (
+        <FlatList
+          keyExtractor={(item) => item}
+          contentContainerStyle={styles.graphRange}
+          data={RANGE}
+          horizontal
+          renderItem={({ item }: { item: GraphicRange }) => (
             <TouchableOpacity key={item} onPress={() => setCurrentRange(item)}>
               <ThemedText
                 {...(item !== currentRange && {
@@ -100,8 +105,10 @@ const Stock = () => {
                 {item}
               </ThemedText>
             </TouchableOpacity>
-          );
-        })}
+          )}
+          scrollEnabled={false}
+          removeClippedSubviews={false}
+        />
       </View>
     );
   };
@@ -123,32 +130,36 @@ const Stock = () => {
           ]}
         >
           <ThemedText
-            animationType="fade"
+            animationType={Animations.Fade}
             type="subtitle"
           >{`$${selectedPoint}`}</ThemedText>
           {result && (
             <ThemedText
-              animationType="fade"
+              animationType={Animations.Fade}
               color={result.isPositive ? accentGreen : accentRed}
             >
               {result.value}
             </ThemedText>
           )}
         </View>
-        <LineGraph
-          style={styles.graph}
-          points={points}
-          animated
-          color={accentGreen}
-          enablePanGesture
-          onPointSelected={(p) => setSelectedPoint(p.value)}
-          onGestureEnd={() => setSelectedPoint(points[points.length - 1].value)}
-          panGestureDelay={0}
-          indicatorPulsating
-          enableFadeInMask
-          gradientFillColors={[hexToRgba(accentGreen, 0.4), "transparent"]}
-        />
-        {renderRange()}
+        <ThemedView animationType={Animations.Fade}>
+          <LineGraph
+            style={styles.graph}
+            points={points}
+            animated
+            color={accentGreen}
+            enablePanGesture
+            onPointSelected={(p) => setSelectedPoint(p.value)}
+            onGestureEnd={() =>
+              setSelectedPoint(points[points.length - 1].value)
+            }
+            panGestureDelay={0}
+            indicatorPulsating
+            enableFadeInMask
+            gradientFillColors={[hexToRgba(accentGreen, 0.4), "transparent"]}
+          />
+          {renderRange()}
+        </ThemedView>
       </View>
     );
   };
@@ -158,7 +169,7 @@ const Stock = () => {
 
     return (
       <View style={styles.titleContainer}>
-        <ThemedText animationType="fade" type="title">
+        <ThemedText animationType={Animations.Fade} type="title">
           {name}
         </ThemedText>
       </View>
@@ -199,10 +210,7 @@ const Stock = () => {
       );
 
     return (
-      <ScrollView
-        style={styles.mainScroll}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Back onPress={onBack} />
         {renderHeader()}
         {renderGraph()}
@@ -259,8 +267,9 @@ const styles = StyleSheet.create({
   newsContainer: {
     paddingVertical: Metrics.largeMargin,
   },
-  mainScroll: {
-    marginBottom: Metrics.mediumMargin,
+  graphRange: {
+    flexGrow: 1,
+    justifyContent: "space-between",
   },
 });
 

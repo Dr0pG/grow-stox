@@ -3,6 +3,7 @@ import { getFormattedDate } from "@/utils/Helper";
 import React, { memo } from "react";
 import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "./ThemedText";
+import { Animations } from "@/constants/Animations";
 
 type PropTypes = {
   headline: string;
@@ -20,9 +21,13 @@ const StocksNews = ({ headline, source, url, datetime }: PropTypes) => {
       onPress={() => Linking.openURL(url)}
     >
       <View style={styles.mainContainer}>
-        <ThemedText animationType="fade">{headline}</ThemedText>
+        <ThemedText animationType={Animations.Fade}>{headline}</ThemedText>
         {datetime && (
-          <ThemedText animationType="fade" type="small" color={secondaryText}>
+          <ThemedText
+            animationType={Animations.Fade}
+            type="small"
+            color={secondaryText}
+          >
             {getFormattedDate(datetime)}
           </ThemedText>
         )}

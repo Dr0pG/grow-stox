@@ -2,6 +2,7 @@ import StocksCard from "@/components/StocksCard";
 import StocksNews from "@/components/StocksNews";
 import { ThemedText } from "@/components/ThemedText";
 import ThemedView from "@/components/ThemedView";
+import { Animations } from "@/constants/Animations";
 import { Metrics } from "@/constants/Metrics";
 import { useTheme } from "@/context/ThemeContext";
 import Finnhub, { NewsDTO, StocksDTO } from "@/services/Finnhub";
@@ -69,30 +70,38 @@ const MainScreen = () => {
     return (
       <View style={styles.followedStocksContainer}>
         <ThemedText
-          animationType="fade"
+          animationType={Animations.Fade}
           type="subtitle"
           style={styles.followedStocksTitle}
         >
           {t("followed_stocks")}
         </ThemedText>
-        <FlatList
-          keyExtractor={(item, index) => `${item.name}_${index}`}
-          contentContainerStyle={{ flexGrow: 1 }}
-          data={stockData}
-          renderItem={({ item, index }: { item: StocksDTO; index: number }) => (
-            <StocksCard
-              key={`${item.name}_${index}`}
-              name={item.name}
-              symbol={item.symbol}
-              price={item.price}
-              percent={parseFloat(item.percent)}
-              onPress={onNavigateToStock}
-            />
-          )}
-          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-          scrollEnabled={false}
-          removeClippedSubviews={false}
-        />
+        <ThemedView animationType={Animations.Fade}>
+          <FlatList
+            keyExtractor={(item, index) => `${item.name}_${index}`}
+            contentContainerStyle={{ flexGrow: 1 }}
+            data={stockData}
+            renderItem={({
+              item,
+              index,
+            }: {
+              item: StocksDTO;
+              index: number;
+            }) => (
+              <StocksCard
+                key={`${item.name}_${index}`}
+                name={item.name}
+                symbol={item.symbol}
+                price={item.price}
+                percent={parseFloat(item.percent)}
+                onPress={onNavigateToStock}
+              />
+            )}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+            scrollEnabled={false}
+            removeClippedSubviews={false}
+          />
+        </ThemedView>
       </View>
     );
   }, [stockData]);
@@ -103,7 +112,7 @@ const MainScreen = () => {
     return (
       <View style={styles.newsContainer}>
         <ThemedText
-          animationType="fade"
+          animationType={Animations.Fade}
           type="subtitle"
           style={styles.newsTitle}
         >
@@ -169,7 +178,6 @@ const styles = StyleSheet.create({
   },
   mainScroll: {
     marginTop: Metrics.largeMargin,
-    marginBottom: Metrics.mediumMargin,
   },
   followedStocksContainer: {
     paddingBottom: Metrics.largeMargin,

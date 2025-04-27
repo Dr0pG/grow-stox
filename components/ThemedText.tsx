@@ -14,6 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCallback } from "react";
 import { Metrics } from "@/constants/Metrics";
+import { Animations } from "@/constants/Animations";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
@@ -26,7 +27,7 @@ export type ThemedTextProps = TextProps & {
     | "defaultSemiBold"
     | "subtitle"
     | "link";
-  animationType?: "fade" | "bounce";
+  animationType?: Animations;
 };
 
 export function ThemedText({
@@ -59,18 +60,21 @@ export function ThemedText({
   const animation = useCallback(() => {
     if (!animationType) return null;
     switch (animationType) {
-      case "fade":
+      case Animations.Fade:
         return {
           entering: FadeInDown.duration(Durations.animations).springify(),
           exiting: FadeOutDown.duration(Durations.animations).springify(),
         };
-      case "bounce":
+      case Animations.Bounce:
         return {
           entering: BounceInDown.duration(Durations.animations).springify(),
           exiting: BounceOutDown.duration(Durations.animations).springify(),
         };
       default:
-        return null;
+        return {
+          entering: FadeInDown.duration(Durations.animations).springify(),
+          exiting: FadeOutDown.duration(Durations.animations).springify(),
+        };
     }
   }, [animationType]);
 
