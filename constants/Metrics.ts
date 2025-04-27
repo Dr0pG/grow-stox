@@ -35,6 +35,10 @@ export const Metrics = {
   // Back Arrow
   backArrowSize: 28,
 
+  // Bottom Bar
+  bottomBarHeight: 70,
+  bottomBarIcon: 24,
+
   // Screen Dimensions
   screenWidth: Dimensions.get("window").width,
   screenHeight: Dimensions.get("window").height,

@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: Metrics.largeMargin,
-    paddingVertical: Metrics.mediumMargin,
+    paddingTop: Metrics.mediumMargin,
   },
   graphInfo: {
     flexDirection: "row",

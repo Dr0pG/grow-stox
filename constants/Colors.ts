@@ -10,6 +10,12 @@ export const Colors = {
     accentRed: "#E53935",
 
     borderLines: "#E0E0E0",
+
+    /** BOTTOM BAR */
+    bottomBarBackground: "#FFFFFF",
+    bottomBarActive: "#00B976",
+    bottomBarInactive: "#666666",
+    bottomBarBorder: "#E0E0E0",
   },
   dark: {
     text: "#FFFFFF",
@@ -22,5 +28,11 @@ export const Colors = {
     accentRed: "#FF5C5C",
 
     borderLines: "#333333",
+
+    /** BOTTOM BAR */
+    bottomBarBackground: "#121212",
+    bottomBarActive: "#00C781",
+    bottomBarInactive: "#B3B3B3",
+    bottomBarBorder: "#1F1F1F",
   },
 };

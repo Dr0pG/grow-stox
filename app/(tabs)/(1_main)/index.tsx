@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: Metrics.largeMargin,
-    paddingVertical: Metrics.mediumMargin,
+    paddingTop: Metrics.mediumMargin,
   },
   mainScroll: {
     marginTop: Metrics.largeMargin,

@@ -21,7 +21,9 @@ const StocksNews = ({ headline, source, url, datetime }: PropTypes) => {
       onPress={() => Linking.openURL(url)}
     >
       <View style={styles.mainContainer}>
-        <ThemedText animationType={Animations.Fade}>{headline}</ThemedText>
+        <ThemedText type="defaultSemiBold" animationType={Animations.Fade}>
+          {headline}
+        </ThemedText>
         {datetime && (
           <ThemedText
             animationType={Animations.Fade}

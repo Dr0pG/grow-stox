@@ -55,7 +55,7 @@ const ThemedApp = () => {
         animated
       />
       <Stack>
-        <Stack.Screen name="(main)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
     </SafeAreaView>
